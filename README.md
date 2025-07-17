@@ -1,0 +1,2 @@
+# reactNativeInventary
+Aplicacion de inventarios
