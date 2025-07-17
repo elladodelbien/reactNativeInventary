@@ -1,0 +1,7 @@
+[install]
+# Usar npm para algunas dependencias específicas de React Native
+registry = "https://registry.npmjs.org"
+peer = true
+
+[install.scopes]
+# Configuraciones específicas si es necesario
