@@ -149,6 +149,12 @@ export default function AreaEnvases() {
               INFORMAR FALLA DE LA MÁQUINA EN TURNO
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.actionButton, styles.purpleButton]}>
+            <Text style={styles.buttonText}>
+              VER TODOS LOS REGISTROS DE ENVASES
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -323,6 +329,9 @@ const styles = StyleSheet.create({
   },
   redButton: {
     backgroundColor: "#93c5fd",
+  },
+  purpleButton: {
+    backgroundColor: "#8b5cf6",
   },
   buttonText: {
     color: "white",

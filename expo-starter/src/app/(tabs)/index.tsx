@@ -11,8 +11,11 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
@@ -49,7 +52,10 @@ export default function HomeScreen() {
         <View style={styles.categoriesSection}>
           <Text style={styles.sectionTitle}>CATEGORÍAS</Text>
           <View style={styles.categoriesGrid}>
-            <TouchableOpacity style={styles.categoryCard}>
+            <TouchableOpacity 
+              style={styles.categoryCard}
+              onPress={() => router.push("/area-envases")}
+            >
               <Ionicons name="cube-outline" size={32} color="#6366f1" />
               <Text style={styles.categoryText}>ENVASES</Text>
             </TouchableOpacity>
