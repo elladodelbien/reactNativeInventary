@@ -33,7 +33,7 @@ export default function CrearRegistroEnvases() {
   const [cantidadEnvases, setCantidadEnvases] = useState("");
   const [horasTrabajadas, setHorasTrabajadas] = useState("");
   const [producto, setProducto] = useState(
-    productoParam ? String(productoParam) : ""
+    productoParam ? String(productoParam) : "",
   );
   const [material, setMaterial] = useState("");
 
@@ -57,7 +57,7 @@ export default function CrearRegistroEnvases() {
   ];
   const materiales = [
     "Polietileno de alta densidad",
-    "Polietileno de baja densidad", 
+    "Polietileno de baja densidad",
     "Polipropileno",
     "PET",
     "PVC",
@@ -118,7 +118,7 @@ export default function CrearRegistroEnvases() {
         setIsLoading(false);
         Alert.alert(
           "Error de validación",
-          "Por favor complete todos los campos requeridos"
+          "Por favor complete todos los campos requeridos",
         );
         return;
       }
@@ -164,7 +164,7 @@ export default function CrearRegistroEnvases() {
             onPress: () => router.back(),
             style: "default",
           },
-        ]
+        ],
       );
     } catch (error) {
       setIsLoading(false);
@@ -178,7 +178,7 @@ export default function CrearRegistroEnvases() {
         [
           { text: "Reintentar", onPress: handleSave },
           { text: "Cancelar", style: "cancel" },
-        ]
+        ],
       );
     }
   };
@@ -197,11 +197,11 @@ export default function CrearRegistroEnvases() {
     const materialMap: { [key: string]: number } = {
       "Polietileno de alta densidad": 8,
       "Polietileno de baja densidad": 9,
-      "Polipropileno": 10,
-      "PET": 11,
-      "PVC": 12,
-      "Polietileno": 13,
-      "ABS": 14,
+      Polipropileno: 10,
+      PET: 11,
+      PVC: 12,
+      Polietileno: 13,
+      ABS: 14,
     };
     return materialMap[materialName] || 8;
   };
@@ -212,7 +212,7 @@ export default function CrearRegistroEnvases() {
     options: string[],
     onSelect: (value: string) => void,
     showPicker: boolean,
-    setShowPicker: (show: boolean) => void
+    setShowPicker: (show: boolean) => void,
   ) => (
     <View>
       <TouchableOpacity
@@ -388,7 +388,7 @@ export default function CrearRegistroEnvases() {
                 productos,
                 setProducto,
                 showProductPicker,
-                setShowProductPicker
+                setShowProductPicker,
               )}
             </View>
 
@@ -401,7 +401,7 @@ export default function CrearRegistroEnvases() {
                 materiales,
                 setMaterial,
                 showMaterialPicker,
-                setShowMaterialPicker
+                setShowMaterialPicker,
               )}
             </View>
 

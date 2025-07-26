@@ -9,7 +9,7 @@ import {
 
 export const ButtonGrid = () => {
   const buttons = [
-    { id: "1", titleexport: "Botón 1" },
+    { id: "1", title: "Botón 1" },
     { id: "2", title: "Botón 2" },
     { id: "3", title: "Botón 3" },
     { id: "4", title: "Botón 4" },

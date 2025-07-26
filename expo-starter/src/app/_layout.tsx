@@ -6,12 +6,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-} from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 // Usar View simple para evitar problemas de dependencias
 
 // Data de prueba temporal (será reemplazada por API)
@@ -19,7 +14,7 @@ const userData = {
   name: "Lisa Martínez",
   role: "Operario de Planta",
   profileImage: null,
-  userId: 123
+  userId: 123,
 };
 
 // Componente personalizado del drawer
@@ -56,9 +51,7 @@ export default function RootLayout() {
   return (
     <React.Fragment>
       <StatusBar style="auto" />
-      <Drawer
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-      >
+      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}>
         {/* Ocultar pantallas que no deben aparecer en el drawer */}
         <Drawer.Screen
           name="index"
@@ -66,7 +59,7 @@ export default function RootLayout() {
             drawerItemStyle: { display: "none" },
           }}
         />
-        
+
         <Drawer.Screen
           name="crear-registro-envases"
           options={{
@@ -160,10 +153,10 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   profileHeader: {
     height: 180,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: '#6366f1',
+    backgroundColor: "#6366f1",
   },
   profileImageContainer: {
     marginBottom: 12,
@@ -173,29 +166,29 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     borderWidth: 2,
-    borderColor: '#ffffff',
+    borderColor: "#ffffff",
   },
   placeholderImage: {
-    backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
   },
   initials: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#666666',
+    fontWeight: "bold",
+    color: "#666666",
   },
   profileName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#ffffff",
+    textAlign: "center",
     marginBottom: 4,
   },
   profileRole: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.8)',
-    textAlign: 'center',
+    color: "rgba(255, 255, 255, 0.8)",
+    textAlign: "center",
   },
   drawerItems: {
     flex: 1,

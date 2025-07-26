@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "bun expo start",
+    "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "bun expo start --web",
-    "lint": "bun eslint .",
-    "build:android": "bun eas build --platform android"
+    "web": "expo start --web",
+    "lint": "eslint .",
+    "build:android": "eas build --platform android"
   },
   "dependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@expo/config-plugins": "~10.1.1",
     "@expo/prebuild-config": "~9.0.0",
     "@react-navigation/drawer": "^7.3.9",
@@ -35,6 +37,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
+    "@babel/plugin-transform-object-rest-spread": "^7.28.0",
+    "@babel/plugin-transform-optional-chaining": "^7.27.1",
     "@types/react": "~19.0.10",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~9.2.0",

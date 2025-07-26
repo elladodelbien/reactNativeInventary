@@ -16,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function AreaEnvases() {
   const [selectedIndex, setSelectedIndex] = useState(1); // Empezar en el centro
@@ -27,9 +27,21 @@ export default function AreaEnvases() {
 
   // Datos del carousel (usando la misma imagen por ahora)
   const products = [
-    { id: 0, name: "BIDÓN DE 10 LITROS", image: require("../../assets/images/image-removebg-preview 1.png") },
-    { id: 1, name: "BIDÓN DE 20 LITROS", image: require("../../assets/images/image-removebg-preview 1.png") },
-    { id: 2, name: "BIDÓN DE 25 LITROS", image: require("../../assets/images/image-removebg-preview 1.png") },
+    {
+      id: 0,
+      name: "BIDÓN DE 10 LITROS",
+      image: require("../../assets/images/image-removebg-preview 1.png"),
+    },
+    {
+      id: 1,
+      name: "BIDÓN DE 20 LITROS",
+      image: require("../../assets/images/image-removebg-preview 1.png"),
+    },
+    {
+      id: 2,
+      name: "BIDÓN DE 25 LITROS",
+      image: require("../../assets/images/image-removebg-preview 1.png"),
+    },
   ];
 
   const handleScroll = (event) => {
@@ -53,23 +65,19 @@ export default function AreaEnvases() {
     const isCenter = index === selectedIndex;
     return (
       <TouchableOpacity
-        style={[
-          styles.carouselItem,
-          isCenter && styles.centerItem,
-        ]}
+        style={[styles.carouselItem, isCenter && styles.centerItem]}
         onPress={() => scrollToIndex(index)}
         activeOpacity={0.9}
       >
-        <View style={[
-          styles.productImageContainer,
-          isCenter && styles.centerImageContainer,
-        ]}>
+        <View
+          style={[
+            styles.productImageContainer,
+            isCenter && styles.centerImageContainer,
+          ]}
+        >
           <Image
             source={item.image}
-            style={[
-              styles.productImage,
-              isCenter && styles.centerImage,
-            ]}
+            style={[styles.productImage, isCenter && styles.centerImage]}
             resizeMode="contain"
           />
         </View>
@@ -80,7 +88,6 @@ export default function AreaEnvases() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-
         {/* Sección de Navegación de Categoría */}
         <View style={styles.navigationSection}>
           <Text style={styles.breadcrumb}>ENVASES</Text>
@@ -115,7 +122,7 @@ export default function AreaEnvases() {
 
         {/* Sección de Botones de Acción */}
         <View style={styles.actionButtonsSection}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.actionButton, styles.greenButton]}
             onPress={() => {
               console.log("Producto seleccionado:", selectedProduct);
@@ -225,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 15,
   },
-  
+
   // Carousel styles
   carouselContainer: {
     paddingHorizontal: width * 0.2, // Para centrar el primer elemento
@@ -239,7 +246,7 @@ const styles = StyleSheet.create({
   centerItem: {
     transform: [{ scale: 1.1 }],
   },
-  
+
   productImageContainer: {
     backgroundColor: "#ffffff",
     borderRadius: 20,
@@ -272,7 +279,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  
+
   productImage: {
     width: 100,
     height: 125,

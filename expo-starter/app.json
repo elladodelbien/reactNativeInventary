@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "jsEngine": "jsc",
+    "jsEngine": "hermes",
     "sdkVersion": "53.0.0",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -16,15 +16,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.cueva1989.expostarter"
+      "bundleIdentifier": "com.cueva1989.expostarter",
+      "newArchEnabled": false
     },
     "android": {
-      "jsEngine": "jsc",
+      "jsEngine": "hermes",
+      "newArchEnabled": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cueva1989.expostarter"
+      "package": "com.cueva1989.expostarter",
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"

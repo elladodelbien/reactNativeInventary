@@ -72,8 +72,8 @@ export default function ExploreScreen() {
         <View style={styles.infoContent}>
           <Text style={styles.infoTitle}>¡Nueva sección!</Text>
           <Text style={styles.infoText}>
-            Esta es la nueva tab "Explorar". Aquí puedes agregar contenido para
-            descubrir nuevas funcionalidades de tu app.
+            Esta es la nueva tab &quot;Explorar&quot;. Aquí puedes agregar
+            contenido para descubrir nuevas funcionalidades de tu app.
           </Text>
         </View>
       </View>

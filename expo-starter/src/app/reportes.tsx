@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 export default function Reportes() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Reportes</Text>
-      <Text style={styles.subtitle}>Generación y visualización de reportes</Text>
+      <Text style={styles.subtitle}>
+        Generación y visualización de reportes
+      </Text>
     </View>
   );
 }
@@ -13,18 +15,18 @@ export default function Reportes() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
 });
