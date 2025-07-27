@@ -14,7 +14,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { authService, validateLoginForm } from "../services/authService";
+import { validateLoginForm } from "../services/authService";
+import { useAuth } from "../components/AuthProvider";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     // Validar formulario
@@ -34,17 +36,16 @@ export default function LoginScreen() {
     setIsLoading(true);
     
     try {
-      const response = await authService.login({ email, password });
+      await login(email, password);
       
-      // Login exitoso
+      // Login exitoso - el AuthProvider se encarga de la navegación automática
       Alert.alert(
         "¡Bienvenido!",
-        `Hola ${response.user.nombre}\nRol: ${response.user.cargo}`,
+        "Inicio de sesión exitoso",
         [
           {
             text: "Continuar",
             onPress: () => {
-              // Navegar a pantalla principal
               router.replace("/(tabs)");
             },
           },

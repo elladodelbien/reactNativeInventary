@@ -96,18 +96,22 @@ class AuthService {
       // Llamar al endpoint de logout del backend
       const token = await this.getToken();
       if (token) {
+        console.log("AuthService - Enviando logout al servidor...");
         await this.makeRequest("/auth/logout", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log("AuthService - Logout del servidor exitoso");
       }
     } catch (error) {
-      console.log("Error en logout del servidor:", error);
+      console.log("AuthService - Error en logout del servidor:", error);
     } finally {
-      // Limpiar datos locales siempre
+      // Limpiar datos locales siempre (incluso si falla el logout del servidor)
+      console.log("AuthService - Limpiando datos locales...");
       await this.clearAuthData();
+      console.log("AuthService - Logout completado");
     }
   }
 
@@ -156,7 +160,9 @@ class AuthService {
 
   async getToken(): Promise<string | null> {
     try {
-      return await AsyncStorage.getItem("auth_token");
+      const token = await AsyncStorage.getItem("auth_token");
+      console.log("AuthService - getToken():", token ? `Token encontrado (${token.substring(0, 20)}...)` : "No hay token");
+      return token;
     } catch (error) {
       console.error("Error obteniendo token:", error);
       return null;
@@ -166,7 +172,13 @@ class AuthService {
   async getUserData(): Promise<LoginResponse["user"] | null> {
     try {
       const userData = await AsyncStorage.getItem("user_data");
-      return userData ? JSON.parse(userData) : null;
+      console.log("AuthService - getUserData():", userData ? "Datos de usuario encontrados" : "No hay datos de usuario");
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        console.log("AuthService - Datos parseados:", parsedData);
+        return parsedData;
+      }
+      return null;
     } catch (error) {
       console.error("Error obteniendo datos del usuario:", error);
       return null;
@@ -180,9 +192,41 @@ class AuthService {
 
   private async clearAuthData(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove(["auth_token", "user_data"]);
+      // Limpiar todas las claves relacionadas con autenticación
+      const keysToRemove = ["auth_token", "user_data"];
+      await AsyncStorage.multiRemove(keysToRemove);
+      console.log("AuthService - Datos de autenticación limpiados completamente");
+      
+      // Verificar que efectivamente se limpiaron
+      const remainingToken = await AsyncStorage.getItem("auth_token");
+      const remainingUserData = await AsyncStorage.getItem("user_data");
+      
+      if (!remainingToken && !remainingUserData) {
+        console.log("AuthService - Verificación exitosa: No quedan datos de sesión");
+      } else {
+        console.warn("AuthService - Advertencia: Aún quedan datos residuales");
+      }
     } catch (error) {
-      console.error("Error limpiando datos de autenticación:", error);
+      console.error("AuthService - Error limpiando datos de autenticación:", error);
+      // En caso de error, intentar limpieza completa como fallback
+      try {
+        await AsyncStorage.clear();
+        console.log("AuthService - Limpieza completa de AsyncStorage realizada como fallback");
+      } catch (clearError) {
+        console.error("AuthService - Error crítico: No se pudo limpiar AsyncStorage", clearError);
+      }
+    }
+  }
+
+  // Función de debug para limpiar completamente el storage
+  async clearAllData(): Promise<void> {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      console.log("AuthService - Todas las claves en storage:", keys);
+      await AsyncStorage.clear();
+      console.log("AuthService - Storage completamente limpiado");
+    } catch (error) {
+      console.error("Error limpiando storage completo:", error);
     }
   }
 

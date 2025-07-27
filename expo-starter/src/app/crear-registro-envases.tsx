@@ -22,11 +22,13 @@ import {
   validateRegistroEnvase,
 } from "../services/productionRecords";
 import { CreateRegistroEnvaseRequest, ValidationErrors } from "../types/api";
+import { useAuth } from "../components/AuthProvider";
 
 export default function CrearRegistroEnvases() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { producto: productoParam } = useLocalSearchParams();
+  const { user } = useAuth();
 
   // Estados del formulario
   const [cantidadMaterial, setCantidadMaterial] = useState("");
@@ -123,16 +125,21 @@ export default function CrearRegistroEnvases() {
         return;
       }
 
+      // Verificar que el usuario esté autenticado
+      if (!user) {
+        Alert.alert("Error", "Usuario no autenticado. Inicie sesión nuevamente.");
+        return;
+      }
+
       // Preparar datos para enviar
       const requestData: CreateRegistroEnvaseRequest = {
         cantidadDeMaterialUsado: parseInt(cantidadMaterial),
         cantidadDeEnvasesProducidos: parseInt(cantidadEnvases),
         horasTrabajadas: parseInt(horasTrabajadas),
-        idUser: 99, // TODO: Obtener del contexto de usuario autenticado
-        ...(producto && { idProducto: getProductoId(producto) }),
-        ...(material && { idMaterial: getMaterialId(material) }),
-        // Operario ID se puede obtener del usuario logueado
-        idOperario: 6, // TODO: Obtener del contexto del operario
+        idUser: user.id, // ID del usuario autenticado
+        idOperario: 5, // ID fijo del operario según ejemplo del backend
+        idProducto: producto ? getProductoId(producto) : 1, // Valor por defecto si no se selecciona
+        idMaterial: material ? getMaterialId(material) : 1, // Valor por defecto si no se selecciona
       };
 
       // Validar datos con el servicio
@@ -271,10 +278,13 @@ export default function CrearRegistroEnvases() {
             <View style={styles.welcomeSection}>
               <Text style={styles.welcomeText}>Registro de Producción</Text>
               <Text style={styles.nameText}>
-                {productoParam
-                  ? `Producto: ${producto}`
-                  : "Captura de datos de envases"}
+                {user?.nombre} - {user?.cargo}
               </Text>
+              {productoParam && (
+                <Text style={[styles.nameText, { fontSize: 11, marginTop: 2 }]}>
+                  Producto: {producto}
+                </Text>
+              )}
             </View>
           </View>
         </View>
@@ -361,7 +371,7 @@ export default function CrearRegistroEnvases() {
               </View>
               <TextInput
                 style={styles.disabledInput}
-                value="Lisa Martínez"
+                value={user?.nombre || "Usuario no identificado"}
                 editable={false}
                 pointerEvents="none"
               />

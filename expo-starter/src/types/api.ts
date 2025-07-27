@@ -3,10 +3,10 @@ export interface CreateRegistroEnvaseRequest {
   cantidadDeEnvasesProducidos: number;
   horasTrabajadas: number;
   fechaCreacion?: string;
-  idOperario?: number;
+  idOperario: number; // Campo requerido según backend
   idUser: number;
-  idProducto?: number;
-  idMaterial?: number;
+  idProducto: number; // Campo requerido según backend
+  idMaterial: number; // Campo requerido según backend
 }
 
 export interface RegistroEnvaseResponse {

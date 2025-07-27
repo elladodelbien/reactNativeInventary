@@ -6,48 +6,106 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { AuthProvider, useAuth } from "@/components/AuthProvider";
+import { useRouter } from "expo-router";
 // Usar View simple para evitar problemas de dependencias
-
-// Data de prueba temporal (será reemplazada por API)
-const userData = {
-  name: "Lisa Martínez",
-  role: "Operario de Planta",
-  profileImage: null,
-  userId: 123,
-};
 
 // Componente personalizado del drawer
 function CustomDrawerContent(props: any) {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      console.log("Drawer - Iniciando logout...");
+      await logout();
+      console.log("Drawer - Logout completado, redirigiendo...");
+      // Usar router.push en lugar de replace para asegurar navegación
+      router.push("/");
+    } catch (error) {
+      console.error("Drawer - Error en logout:", error);
+      // Incluso si hay error, redirigir al index que manejará la redirección
+      router.push("/");
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
       {/* Sección de Perfil */}
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-          {userData.profileImage ? (
-            <Image
-              source={{ uri: userData.profileImage }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={[styles.profileImage, styles.placeholderImage]}>
-              <Text style={styles.initials}>LM</Text>
-            </View>
-          )}
+          <View style={[styles.profileImage, styles.placeholderImage]}>
+            <Text style={styles.initials}>
+              {user ? getInitials(user.nombre) : "??"}
+            </Text>
+          </View>
         </View>
-        <Text style={styles.profileName}>{userData.name}</Text>
-        <Text style={styles.profileRole}>{userData.role}</Text>
+        <Text style={styles.profileName}>{user?.nombre || "Usuario"}</Text>
+        <Text style={styles.profileRole}>{user?.cargo || "Sin cargo"}</Text>
       </View>
 
       {/* Lista de elementos del drawer */}
       <View style={styles.drawerItems}>
         <DrawerItemList {...props} />
       </View>
+
+      {/* Botón de logout */}
+      <View style={styles.logoutSection}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={20} color="#ef4444" />
+          <Text style={styles.logoutText}>Cerrar Sesión</Text>
+        </TouchableOpacity>
+      </View>
     </DrawerContentScrollView>
   );
 }
 
-export default function RootLayout() {
+
+// Layout principal que maneja la navegación según autenticación
+function AppNavigator() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6366f1" />
+        <Text style={styles.loadingText}>Verificando autenticación...</Text>
+      </View>
+    );
+  }
+
+  // Si no está autenticado, permitir que index.tsx maneje la redirección
+  if (!isAuthenticated) {
+    return (
+      <React.Fragment>
+        <StatusBar style="auto" />
+        {/* Renderizar un drawer mínimo solo con las pantallas necesarias */}
+        <Drawer screenOptions={{ headerShown: false, drawerType: 'front' }}>
+          <Drawer.Screen
+            name="index"
+            options={{ drawerItemStyle: { display: "none" } }}
+          />
+          <Drawer.Screen
+            name="login"
+            options={{ drawerItemStyle: { display: "none" } }}
+          />
+        </Drawer>
+      </React.Fragment>
+    );
+  }
+
+  // Si está autenticado, mostrar el drawer completo
   return (
     <React.Fragment>
       <StatusBar style="auto" />
@@ -55,6 +113,13 @@ export default function RootLayout() {
         {/* Ocultar pantallas que no deben aparecer en el drawer */}
         <Drawer.Screen
           name="index"
+          options={{
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+
+        <Drawer.Screen
+          name="login"
           options={{
             drawerItemStyle: { display: "none" },
           }}
@@ -150,6 +215,14 @@ export default function RootLayout() {
   );
 }
 
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AppNavigator />
+    </AuthProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   profileHeader: {
     height: 180,
@@ -193,5 +266,40 @@ const styles = StyleSheet.create({
   drawerItems: {
     flex: 1,
     paddingTop: 10,
+  },
+  logoutSection: {
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.2)",
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderRadius: 8,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: "#ef4444",
+    marginLeft: 12,
+    fontWeight: "500",
+  },
+  
+  // Loading styles para verificación de autenticación
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#6B7280",
+    textAlign: "center",
   },
 });
