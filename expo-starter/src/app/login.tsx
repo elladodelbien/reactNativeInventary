@@ -10,9 +10,11 @@ import {
   Platform,
   Image,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { authService, validateLoginForm } from "../services/authService";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -21,14 +23,42 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    // Validar formulario
+    const validation = validateLoginForm({ email, password });
+    if (!validation.isValid) {
+      Alert.alert("Error de validación", validation.errors.join("\n"));
+      return;
+    }
+
     setIsLoading(true);
-    // Aquí implementaremos la lógica de login después
-    console.log("Login con:", { email, password });
-    setTimeout(() => {
+    
+    try {
+      const response = await authService.login({ email, password });
+      
+      // Login exitoso
+      Alert.alert(
+        "¡Bienvenido!",
+        `Hola ${response.user.nombre}\nRol: ${response.user.cargo}`,
+        [
+          {
+            text: "Continuar",
+            onPress: () => {
+              // Navegar a pantalla principal
+              router.replace("/(tabs)");
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error en login:", error);
+      Alert.alert(
+        "Error de autenticación",
+        error instanceof Error ? error.message : "Error desconocido al iniciar sesión"
+      );
+    } finally {
       setIsLoading(false);
-      // Navegar a pantalla principal después del login exitoso
-    }, 2000);
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -81,6 +111,7 @@ export default function LoginScreen() {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
+                  editable={!isLoading}
                 />
               </View>
             </View>
@@ -103,6 +134,7 @@ export default function LoginScreen() {
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  editable={!isLoading}
                 />
                 <TouchableOpacity
                   style={styles.showPasswordButton}
