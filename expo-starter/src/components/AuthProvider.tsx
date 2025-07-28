@@ -1,14 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "../services/authService";
-
-interface User {
-  id: number;
-  email: string;
-  nombre: string;
-  cargo: string;
-  telefono: string;
-  activo: boolean;
-}
+import { User } from "../utils/permissions";
 
 interface AuthContextType {
   user: User | null;
@@ -42,12 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Intentar obtener datos del usuario
         const userData = await authService.getUserData();
         if (userData) {
-          setUser(userData);
+          setUser(userData as User);
         } else {
           // Si no hay datos de usuario, intentar obtenerlos del servidor
           try {
             const profile = await authService.getProfile();
-            setUser(profile);
+            setUser(profile as User);
           } catch (error) {
             // Token inválido o expirado, limpiar
             await authService.logout();
@@ -68,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login({ email, password });
-      setUser(response.user);
+      setUser(response.user as User);
     } catch (error) {
       setUser(null);
       throw error;
@@ -93,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = async () => {
     try {
       const profile = await authService.getProfile();
-      setUser(profile);
+      setUser(profile as User);
     } catch (error) {
       console.error("Error actualizando usuario:", error);
       // Si falla la actualización, mantener el usuario actual

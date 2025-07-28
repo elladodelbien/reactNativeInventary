@@ -5,8 +5,8 @@ import {
 } from "../types/api";
 import { authService } from "./authService";
 
-const API_BASE_URL = "http://192.168.101.8:3300";
-const API_TIMEOUT = 10000; // 10 seconds
+const API_BASE_URL = "http://192.168.1.75:3300";
+const API_TIMEOUT = 30000; // 30 seconds para desarrollo local
 
 class ProductionRecordsService {
   private async makeRequest<T>(

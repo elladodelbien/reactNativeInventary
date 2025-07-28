@@ -15,6 +15,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/components/AuthProvider";
+import { canViewAllRecords } from "@/utils/permissions";
 
 const { width } = Dimensions.get("window");
 
@@ -24,6 +26,8 @@ export default function AreaEnvases() {
   const carouselRef = useRef(null);
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { user } = useAuth();
+
 
   // Datos del carousel (usando la misma imagen por ahora)
   const products = [
@@ -150,11 +154,14 @@ export default function AreaEnvases() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.actionButton, styles.purpleButton]}>
-            <Text style={styles.buttonText}>
-              VER TODOS LOS REGISTROS DE ENVASES
-            </Text>
-          </TouchableOpacity>
+          {/* Botón solo visible para roles autorizados */}
+          {canViewAllRecords(user) && (
+            <TouchableOpacity style={[styles.actionButton, styles.purpleButton]}>
+              <Text style={styles.buttonText}>
+                VER TODOS LOS REGISTROS DE ENVASES
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
 

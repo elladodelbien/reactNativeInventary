@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = "http://192.168.101.8:3300";
-const API_TIMEOUT = 10000; // 10 seconds
+const API_BASE_URL = "http://192.168.1.75:3300";
+const API_TIMEOUT = 30000; // 30 seconds para desarrollo local
 
 export interface LoginRequest {
   email: string;
@@ -62,13 +62,13 @@ class AuthService {
       if (error instanceof Error) {
         if (error.name === "AbortError") {
           throw new Error(
-            "La petición ha excedido el tiempo límite. Verifique su conexión.",
+            `La petición ha excedido el tiempo límite de ${API_TIMEOUT/1000} segundos. Verifique:\n1. Que el servidor esté funcionando en ${API_BASE_URL}\n2. Su conexión a internet\n3. Que esté conectado a la red correcta`,
           );
         }
 
         if (error instanceof TypeError && error.message.includes("fetch")) {
           throw new Error(
-            "Error de conexión. Verifique que el servidor esté funcionando.",
+            `Error de conexión al servidor ${API_BASE_URL}. Verifique:\n1. Que el servidor backend esté ejecutándose\n2. Que la IP y puerto sean correctos\n3. Su conexión de red`,
           );
         }
 

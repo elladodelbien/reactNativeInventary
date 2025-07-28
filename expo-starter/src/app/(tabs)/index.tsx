@@ -12,9 +12,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { user } = useAuth();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,8 +30,10 @@ export default function HomeScreen() {
                 style={styles.profileImage}
               />
               <View style={styles.welcomeSection}>
-                <Text style={styles.welcomeText}>Bienvenida</Text>
-                <Text style={styles.nameText}>Lisa Martínez</Text>
+                <Text style={styles.welcomeText}>
+                  {user?.nombre?.includes('a') || user?.nombre?.toLowerCase().endsWith('a') ? 'Bienvenida' : 'Bienvenido'}
+                </Text>
+                <Text style={styles.nameText}>{user?.nombre || "Usuario"}</Text>
               </View>
             </View>
           </View>
