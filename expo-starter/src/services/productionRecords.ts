@@ -5,14 +5,16 @@ import {
 } from "../types/api";
 import { authService } from "./authService";
 
-const API_BASE_URL = "http://192.168.1.75:3300";
+// const API_BASE_URL = "http://192.168.1.75:3300";
+const API_BASE_URL = "https://production-records-backend.vercel.app";
+
 const API_TIMEOUT = 30000; // 30 seconds para desarrollo local
 
 class ProductionRecordsService {
   private async makeRequest<T>(
     endpoint: string,
     options: RequestInit = {},
-    requireAuth: boolean = true,
+    requireAuth: boolean = true
   ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
@@ -26,17 +28,20 @@ class ProductionRecordsService {
       // Agregar token de autenticación si es requerido
       if (requireAuth) {
         const token = await authService.getToken();
-        console.log("ProductionRecords - Token obtenido:", token ? "Token presente" : "No hay token");
-        
+        console.log(
+          "ProductionRecords - Token obtenido:",
+          token ? "Token presente" : "No hay token"
+        );
+
         if (!token) {
           throw new Error("Usuario no autenticado. Inicie sesión nuevamente.");
         }
-        
+
         headers = {
           ...headers,
           Authorization: `Bearer ${token}`,
         };
-        
+
         console.log("ProductionRecords - Headers con token configurados");
       }
 
@@ -53,7 +58,7 @@ class ProductionRecordsService {
           // Token expirado o inválido
           throw new Error("Sesión expirada. Inicie sesión nuevamente.");
         }
-        
+
         if (response.status === 403) {
           throw new Error("No tiene permisos para realizar esta acción.");
         }
@@ -62,7 +67,7 @@ class ProductionRecordsService {
         throw new Error(
           Array.isArray(errorData.message)
             ? errorData.message.join(", ")
-            : errorData.message || `Error ${response.status}`,
+            : errorData.message || `Error ${response.status}`
         );
       }
 
@@ -73,13 +78,13 @@ class ProductionRecordsService {
       if (error instanceof Error) {
         if (error.name === "AbortError") {
           throw new Error(
-            "La petición ha excedido el tiempo límite. Verifique su conexión.",
+            "La petición ha excedido el tiempo límite. Verifique su conexión."
           );
         }
 
         if (error instanceof TypeError && error.message.includes("fetch")) {
           throw new Error(
-            "Error de conexión. Verifique que el servidor esté funcionando.",
+            "Error de conexión. Verifique que el servidor esté funcionando."
           );
         }
 
@@ -91,14 +96,14 @@ class ProductionRecordsService {
   }
 
   async createRegistroEnvase(
-    data: CreateRegistroEnvaseRequest,
+    data: CreateRegistroEnvaseRequest
   ): Promise<RegistroEnvaseResponse> {
     console.log("=== DEBUG REGISTRO ENVASES ===");
-    
+
     // Verificar que el usuario esté autenticado y tenga permisos
     const userData = await authService.getUserData();
     console.log("ProductionRecords - Datos de usuario:", userData);
-    
+
     if (!userData) {
       throw new Error("Usuario no autenticado");
     }
@@ -106,13 +111,13 @@ class ProductionRecordsService {
     // Verificar permisos de cargo
     const cargosPermitidos = [
       "Operario de Planta",
-      "Supervisor de Área", 
-      "Gerente de Producción"
+      "Supervisor de Área",
+      "Gerente de Producción",
     ];
-    
+
     console.log("ProductionRecords - Cargo del usuario:", userData.cargo);
     console.log("ProductionRecords - Cargos permitidos:", cargosPermitidos);
-    
+
     if (!cargosPermitidos.includes(userData.cargo)) {
       throw new Error("No tiene permisos para registrar envases");
     }
@@ -130,7 +135,7 @@ class ProductionRecordsService {
       {
         method: "POST",
         body: JSON.stringify(payload),
-      },
+      }
     );
   }
 }
@@ -138,7 +143,7 @@ class ProductionRecordsService {
 export const productionRecordsService = new ProductionRecordsService();
 
 export const validateRegistroEnvase = (
-  data: Partial<CreateRegistroEnvaseRequest>,
+  data: Partial<CreateRegistroEnvaseRequest>
 ) => {
   const errors: string[] = [];
 
@@ -159,11 +164,17 @@ export const validateRegistroEnvase = (
   }
 
   // Validar que sean números enteros
-  if (data.cantidadDeMaterialUsado && !Number.isInteger(data.cantidadDeMaterialUsado)) {
+  if (
+    data.cantidadDeMaterialUsado &&
+    !Number.isInteger(data.cantidadDeMaterialUsado)
+  ) {
     errors.push("La cantidad de material debe ser un número entero");
   }
 
-  if (data.cantidadDeEnvasesProducidos && !Number.isInteger(data.cantidadDeEnvasesProducidos)) {
+  if (
+    data.cantidadDeEnvasesProducidos &&
+    !Number.isInteger(data.cantidadDeEnvasesProducidos)
+  ) {
     errors.push("La cantidad de envases debe ser un número entero");
   }
 
@@ -180,16 +191,34 @@ export const validateRegistroEnvase = (
   }
 
   // Validar IDs requeridos
-  if (!data.idOperario || !Number.isInteger(data.idOperario) || data.idOperario <= 0) {
-    errors.push("El ID del operario es requerido y debe ser un número entero positivo");
+  if (
+    !data.idOperario ||
+    !Number.isInteger(data.idOperario) ||
+    data.idOperario <= 0
+  ) {
+    errors.push(
+      "El ID del operario es requerido y debe ser un número entero positivo"
+    );
   }
 
-  if (!data.idProducto || !Number.isInteger(data.idProducto) || data.idProducto <= 0) {
-    errors.push("El ID del producto es requerido y debe ser un número entero positivo");
+  if (
+    !data.idProducto ||
+    !Number.isInteger(data.idProducto) ||
+    data.idProducto <= 0
+  ) {
+    errors.push(
+      "El ID del producto es requerido y debe ser un número entero positivo"
+    );
   }
 
-  if (!data.idMaterial || !Number.isInteger(data.idMaterial) || data.idMaterial <= 0) {
-    errors.push("El ID del material es requerido y debe ser un número entero positivo");
+  if (
+    !data.idMaterial ||
+    !Number.isInteger(data.idMaterial) ||
+    data.idMaterial <= 0
+  ) {
+    errors.push(
+      "El ID del material es requerido y debe ser un número entero positivo"
+    );
   }
 
   return {

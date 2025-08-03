@@ -1,6 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "http://192.168.1.75:3300";
+// const API_BASE_URL = "http://192.168.1.75:3300";
+const API_BASE_URL = "https://production-records-backend.vercel.app";
+
 const API_TIMEOUT = 30000; // 30 seconds para desarrollo local
 
 export interface LoginRequest {
@@ -29,13 +31,13 @@ export interface ApiError {
 class AuthService {
   private async makeRequest<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
+    // http://localhost:3300/api/auth/login
     try {
-      const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         ...options,
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +53,7 @@ class AuthService {
         throw new Error(
           Array.isArray(errorData.message)
             ? errorData.message.join(", ")
-            : errorData.message || `Error ${response.status}`,
+            : errorData.message || `Error ${response.status}`
         );
       }
 
@@ -62,13 +64,13 @@ class AuthService {
       if (error instanceof Error) {
         if (error.name === "AbortError") {
           throw new Error(
-            `La petición ha excedido el tiempo límite de ${API_TIMEOUT/1000} segundos. Verifique:\n1. Que el servidor esté funcionando en ${API_BASE_URL}\n2. Su conexión a internet\n3. Que esté conectado a la red correcta`,
+            `La petición ha excedido el tiempo límite de ${API_TIMEOUT / 1000} segundos. Verifique:\n1. Que el servidor esté funcionando en ${API_BASE_URL}\n2. Su conexión a internet\n3. Que esté conectado a la red correcta`
           );
         }
 
         if (error instanceof TypeError && error.message.includes("fetch")) {
           throw new Error(
-            `Error de conexión al servidor ${API_BASE_URL}. Verifique:\n1. Que el servidor backend esté ejecutándose\n2. Que la IP y puerto sean correctos\n3. Su conexión de red`,
+            `Error de conexión al servidor ${API_BASE_URL}. Verifique:\n1. Que el servidor backend esté ejecutándose\n2. Que la IP y puerto sean correctos\n3. Su conexión de red`
           );
         }
 
@@ -87,7 +89,7 @@ class AuthService {
 
     // Guardar token y datos del usuario
     await this.storeAuthData(response);
-    
+
     return response;
   }
 
@@ -144,7 +146,7 @@ class AuthService {
 
     // Actualizar token almacenado
     await this.storeAuthData(response);
-    
+
     return response;
   }
 
@@ -161,7 +163,12 @@ class AuthService {
   async getToken(): Promise<string | null> {
     try {
       const token = await AsyncStorage.getItem("auth_token");
-      console.log("AuthService - getToken():", token ? `Token encontrado (${token.substring(0, 20)}...)` : "No hay token");
+      console.log(
+        "AuthService - getToken():",
+        token
+          ? `Token encontrado (${token.substring(0, 20)}...)`
+          : "No hay token"
+      );
       return token;
     } catch (error) {
       console.error("Error obteniendo token:", error);
@@ -172,7 +179,10 @@ class AuthService {
   async getUserData(): Promise<LoginResponse["user"] | null> {
     try {
       const userData = await AsyncStorage.getItem("user_data");
-      console.log("AuthService - getUserData():", userData ? "Datos de usuario encontrados" : "No hay datos de usuario");
+      console.log(
+        "AuthService - getUserData():",
+        userData ? "Datos de usuario encontrados" : "No hay datos de usuario"
+      );
       if (userData) {
         const parsedData = JSON.parse(userData);
         console.log("AuthService - Datos parseados:", parsedData);
@@ -195,25 +205,37 @@ class AuthService {
       // Limpiar todas las claves relacionadas con autenticación
       const keysToRemove = ["auth_token", "user_data"];
       await AsyncStorage.multiRemove(keysToRemove);
-      console.log("AuthService - Datos de autenticación limpiados completamente");
-      
+      console.log(
+        "AuthService - Datos de autenticación limpiados completamente"
+      );
+
       // Verificar que efectivamente se limpiaron
       const remainingToken = await AsyncStorage.getItem("auth_token");
       const remainingUserData = await AsyncStorage.getItem("user_data");
-      
+
       if (!remainingToken && !remainingUserData) {
-        console.log("AuthService - Verificación exitosa: No quedan datos de sesión");
+        console.log(
+          "AuthService - Verificación exitosa: No quedan datos de sesión"
+        );
       } else {
         console.warn("AuthService - Advertencia: Aún quedan datos residuales");
       }
     } catch (error) {
-      console.error("AuthService - Error limpiando datos de autenticación:", error);
+      console.error(
+        "AuthService - Error limpiando datos de autenticación:",
+        error
+      );
       // En caso de error, intentar limpieza completa como fallback
       try {
         await AsyncStorage.clear();
-        console.log("AuthService - Limpieza completa de AsyncStorage realizada como fallback");
+        console.log(
+          "AuthService - Limpieza completa de AsyncStorage realizada como fallback"
+        );
       } catch (clearError) {
-        console.error("AuthService - Error crítico: No se pudo limpiar AsyncStorage", clearError);
+        console.error(
+          "AuthService - Error crítico: No se pudo limpiar AsyncStorage",
+          clearError
+        );
       }
     }
   }
@@ -233,7 +255,7 @@ class AuthService {
   // Método de utilidad para hacer requests autenticados
   async makeAuthenticatedRequest<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: RequestInit = {}
   ): Promise<T> {
     const token = await this.getToken();
     if (!token) {
