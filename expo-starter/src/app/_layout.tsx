@@ -132,6 +132,13 @@ function AppNavigator() {
           }}
         />
 
+        <Drawer.Screen
+          name="lista-registros-envases"
+          options={{
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+
         {/* Pantalla principal con tabs */}
         <Drawer.Screen
           name="(tabs)"

@@ -1,6 +1,8 @@
 import {
   CreateRegistroEnvaseRequest,
   RegistroEnvaseResponse,
+  RegistrosEnvasesResponse,
+  RegistrosEnvasesQueryParams,
   ApiError,
 } from "../types/api";
 import { authService } from "./authService";
@@ -135,6 +137,78 @@ class ProductionRecordsService {
       {
         method: "POST",
         body: JSON.stringify(payload),
+      }
+    );
+  }
+
+  async getAllRegistrosEnvases(
+    params: RegistrosEnvasesQueryParams = {}
+  ): Promise<RegistrosEnvasesResponse> {
+    console.log("=== OBTENIENDO REGISTROS DE ENVASES ===");
+    
+    // Verificar que el usuario esté autenticado y tenga permisos
+    const userData = await authService.getUserData();
+    console.log("ProductionRecords - Datos de usuario:", userData);
+
+    if (!userData) {
+      throw new Error("Usuario no autenticado");
+    }
+
+    // Verificar permisos de cargo para ver todos los registros
+    const cargosPermitidos = [
+      "Supervisor de Área",
+      "Gerente de Producción",
+      "Administrativo",
+    ];
+
+    console.log("ProductionRecords - Cargo del usuario:", userData.cargo);
+    console.log("ProductionRecords - Cargos permitidos:", cargosPermitidos);
+
+    if (!cargosPermitidos.includes(userData.cargo)) {
+      throw new Error("No tiene permisos para ver todos los registros de envases");
+    }
+
+    // Construir query string
+    const queryParams = new URLSearchParams();
+    
+    // Valores por defecto
+    const page = params.page || 1;
+    const limit = params.limit || 20;
+    const sortBy = params.sortBy || 'fechaCreacion';
+    const sortOrder = params.sortOrder || 'DESC';
+    
+    queryParams.append('page', page.toString());
+    queryParams.append('limit', limit.toString());
+    queryParams.append('sortBy', sortBy);
+    queryParams.append('sortOrder', sortOrder);
+    
+    // Parámetros opcionales
+    if (params.userId) queryParams.append('userId', params.userId.toString());
+    if (params.operarioId) queryParams.append('operarioId', params.operarioId.toString());
+    if (params.productoId) queryParams.append('productoId', params.productoId.toString());
+
+    const endpoint = `/api/production-records/envases?${queryParams.toString()}`;
+    console.log("ProductionRecords - Endpoint completo:", endpoint);
+
+    return this.makeRequest<RegistrosEnvasesResponse>(endpoint, {
+      method: "GET",
+    });
+  }
+
+  async getRegistroEnvaseById(id: number): Promise<RegistroEnvaseResponse> {
+    console.log("=== OBTENIENDO REGISTRO DE ENVASE POR ID ===");
+    console.log("ProductionRecords - ID del registro:", id);
+    
+    // Verificar que el usuario esté autenticado
+    const userData = await authService.getUserData();
+    if (!userData) {
+      throw new Error("Usuario no autenticado");
+    }
+
+    return this.makeRequest<RegistroEnvaseResponse>(
+      `/api/production-records/envases/${id}`,
+      {
+        method: "GET",
       }
     );
   }

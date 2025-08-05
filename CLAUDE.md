@@ -73,12 +73,25 @@ expo-starter/
 - **ESLint + Prettier**: Code quality with expo config and prettier integration
 
 ### API Integration Architecture
-- **Service Pattern**: `ProductionRecordsService` class in `src/services/productionRecords.ts`
-- **Base URL**: `http://192.168.101.8:3300` (local development server)
-- **Request handling**: 10-second timeout with AbortController, comprehensive error handling
-- **Validation**: Client-side validation with `validateRegistroEnvase()` function
+- **Service Pattern**: Two main service classes:
+  - `AuthService` in `src/services/authService.ts` for authentication
+  - `ProductionRecordsService` in `src/services/productionRecords.ts` for production data
+- **Base URL**: `https://production-records-backend.vercel.app` (production)
+- **Request handling**: 30-second timeout with AbortController, comprehensive error handling
+- **Authentication**: JWT token-based auth with AsyncStorage persistence
+- **Validation**: Client-side validation with form validation functions
 - **Error messages**: Spanish localized error messages for user-facing feedback
 - **Type safety**: Full TypeScript coverage with `src/types/api.ts` interfaces
+
+### Authentication System
+- **AuthProvider**: React Context provider in `src/components/AuthProvider.tsx`
+- **Persistent sessions**: JWT tokens stored in AsyncStorage with auto-refresh
+- **Role-based permissions**: Four user roles with specific capabilities (see `src/utils/permissions.ts`):
+  - Operario de Planta: Create records, view own records
+  - Supervisor de Área: Create/view all records, access reports  
+  - Gerente de Producción: Full access to records, reports, and admin
+  - Administrativo: Full access to reports and data visualization
+- **Session management**: Automatic logout with server notification and local cleanup
 
 ### Build Configuration Details
 - **EAS Build**: Configured for Android APK builds with auto-increment versioning
@@ -93,3 +106,11 @@ expo-starter/
 - **State management**: React built-in state (no Redux/Zustand configured)
 - **Component patterns**: Mix of functional components with hooks and StyleSheet/NativeWind styling
 - **Production focus**: Real-world manufacturing operations tracking and reporting
+
+### Important Instructions
+Always prefer editing existing files over creating new ones. Never proactively create documentation files (*.md) or README files unless explicitly requested by the user.
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.

@@ -156,7 +156,10 @@ export default function AreaEnvases() {
 
           {/* Botón solo visible para roles autorizados */}
           {canViewAllRecords(user) && (
-            <TouchableOpacity style={[styles.actionButton, styles.purpleButton]}>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.purpleButton]}
+              onPress={() => router.push("/lista-registros-envases")}
+            >
               <Text style={styles.buttonText}>
                 VER TODOS LOS REGISTROS DE ENVASES
               </Text>
